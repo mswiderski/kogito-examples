@@ -15,6 +15,10 @@
 
   <name>jBPM example running on Quarkus</name>
   <description>Order management service</description>
+  
+  <properties>
+    <version.io.quarkus>999-SNAPSHOT</version.io.quarkus>
+  </properties>
 
   <dependencyManagement>
     <dependencies>
@@ -62,7 +66,16 @@
       <groupId>org.kie.kogito</groupId>
       <artifactId>process-management-addon</artifactId>
     </dependency>
-    <!--  Included so swagger-ui is available in quarkus dev mode on http://localhost:8080/swagger-ui -->
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-infinispan-client</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.kie.kogito</groupId>
+      <artifactId>infinispan-persistence-addon</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <!-- Included so swagger-ui is available in quarkus dev mode on http://localhost:8080/swagger-ui -->
     <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-smallrye-openapi</artifactId>
@@ -137,6 +150,19 @@
           <plugin>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>native-image</goal>
+                </goals>
+                <configuration>
+                  <additionalBuildArgs>
+                  <param>--allow-incomplete-classpath</param>
+                  <param>-H:ResourceConfigurationFiles=../resource-config.json</param>
+                  </additionalBuildArgs>
+                </configuration>
+              </execution>
+            </executions>
           </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
@@ -154,15 +180,7 @@
         </property>
       </activation>
       <dependencies>
-        <dependency>
-          <groupId>io.quarkus</groupId>
-          <artifactId>quarkus-infinispan-client</artifactId>
-        </dependency>
-        <dependency>
-          <groupId>org.kie.kogito</groupId>
-          <artifactId>infinispan-persistence-addon</artifactId>
-          <version>${project.version}</version>
-        </dependency>
+
       </dependencies>
     </profile>
   </profiles>
